@@ -184,40 +184,35 @@ else:
 "
 fi
 
-# --- NEXT TOOLS (Commented out for now) ---
+# 3. Graphify (Python via uv)
+echo "------------------------------------------"
+echo "📊 Installing Graphify (Code Graph)..."
+echo "------------------------------------------"
+if uv tool list | grep -q "graphifyy"; then
+    echo "✅ Graphify is already installed."
+else
+    echo "📊 Installing Graphify (Codebase Intelligence)..."
+    uv tool install graphifyy
+    # Perform a clean global skill installation for ~/.agents/skills
+    # We use 'install --platform' to avoid creating local project rules/workflows
+    graphify install --platform antigravity
+    echo "✅ Graphify installed and initialized globally."
+fi
+echo ""
 
-# # 3. Graphify (Python via uv)
-# echo "------------------------------------------"
-# echo "📊 Installing Graphify (Code Graph)..."
-# echo "------------------------------------------"
-# uv tool install graphifyy
-# # Initialize graphify default config
-# graphify install --platform gemini
-# echo "✅ Graphify installed and initialized."
-# echo ""
+# AgentOS Phase 3: Agent Skills
 
-# # 4. Workspace Initialization
-# echo "------------------------------------------"
-# echo "📁 Initializing Workspace Folders..."
-# echo "------------------------------------------"
-# mkdir -p notes
-# mkdir -p memory
-
-# # Create a basic index for Obsidian if it doesn't exist
-# if [ ! -f notes/Index.md ]; then
-# cat <<EOF > notes/Index.md
-# # AgentOS Vault Index
-
-# Welcome to your AgentOS vault.
-
-# - [[Project Roadmap]]
-# - [[Architecture Graph]]
-# - [[Agent Logs]]
-
-# ---
-# *Created by AgentOS Setup*
-# EOF
-# fi
-
-# echo "✅ Workspace initialized."
-# echo ""
+echo "------------------------------------------"
+echo "🧩 Configuring Agent Skills..."
+echo "------------------------------------------"
+if [ -d "$HOME/.gemini/antigravity" ]; then
+    echo "🔗 Linking Universal Skills to Antigravity..."
+    SKILLS_FILE="$HOME/.gemini/antigravity/skills.txt"
+    if grep -q "^$HOME/.agents/skills\$" "$SKILLS_FILE" 2>/dev/null; then
+        echo "✅ Antigravity already configured to use universal skills."
+    else
+        echo "$HOME/.agents/skills" >> "$SKILLS_FILE"
+        echo "✅ Antigravity configured to use universal skills."
+    fi
+fi
+echo ""
