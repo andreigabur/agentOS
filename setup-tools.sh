@@ -42,7 +42,7 @@ if [ ! -d "$MEM_PATH" ]; then
     echo "📂 Creating and Initializing Memory Vault at $MEM_PATH..."
     mkdir -p "$MEM_PATH"
     # Continually press enter to auto-accept all initialization prompts
-    yes "" | mempalace init "$MEM_PATH" --no-llm
+    yes "" | mempalace init "$MEM_PATH"
     echo "✅ Memory vault initialized."
 else
     echo "✅ Memory vault already exists."
@@ -214,5 +214,32 @@ if [ -d "$HOME/.gemini/antigravity" ]; then
         echo "$HOME/.agents/skills" >> "$SKILLS_FILE"
         echo "✅ Antigravity configured to use universal skills."
     fi
+fi
+echo ""
+
+# Install obsidian-markdown skill
+echo "------------------------------------------"
+echo "📝 Installing Obsidian Markdown Skill..."
+echo "------------------------------------------"
+SKILLS_DIR="$HOME/.agents/skills"
+if [ -d "$SKILLS_DIR/obsidian-markdown" ]; then
+    echo "✅ obsidian-markdown skill already installed."
+else
+    echo "📥 Installing obsidian-markdown from kepano/obsidian-skills..."
+    npx skills add https://github.com/kepano/obsidian-skills --skill obsidian-markdown --global --yes
+    echo "✅ obsidian-markdown skill installed."
+fi
+echo ""
+
+# Install obsidian-cli skill
+echo "------------------------------------------"
+echo "🔧 Installing Obsidian CLI Skill..."
+echo "------------------------------------------"
+if [ -d "$SKILLS_DIR/obsidian-cli" ]; then
+    echo "✅ obsidian-cli skill already installed."
+else
+    echo "📥 Installing obsidian-cli from kepano/obsidian-skills..."
+    npx skills add https://github.com/kepano/obsidian-skills --skill obsidian-cli --global --yes
+    echo "✅ obsidian-cli skill installed."
 fi
 echo ""
