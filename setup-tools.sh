@@ -8,7 +8,7 @@ echo ""
 
 # 1. CodeBurn (Node.js)
 echo "------------------------------------------"
-echo "🔍 Checking for CodeBurn..."
+echo "🔍 CodeBurn..."
 echo "------------------------------------------"
 
 if command -v codeburn &> /dev/null; then
@@ -24,7 +24,7 @@ echo ""
 
 # 2. MemPalace (Python via uv)
 echo "------------------------------------------"
-echo "🧠 Checking for MemPalace..."
+echo "🧠 MemPalace..."
 echo "------------------------------------------"
 
 MEM_PATH="$HOME/.mempalace/vault"
@@ -56,9 +56,8 @@ echo ""
 
 # 2.1 OpenCode Integration
 if [ -d "$HOME/.config/opencode" ]; then
-    echo "------------------------------------------"
+    echo ""
     echo "🤖 Configuring OpenCode Integration..."
-    echo "------------------------------------------"
     OPENCODE_CONFIG="$HOME/.config/opencode/opencode.json"
     
     # Create the config file if it doesn't exist
@@ -93,9 +92,8 @@ fi
 
 # 2.2 Gemini CLI Integration
 if command -v gemini &> /dev/null; then
-    echo "------------------------------------------"
+    echo ""
     echo "🤖 Configuring Gemini CLI Integration..."
-    echo "------------------------------------------"
     # Redirect stderr to stdout (2>&1) because gemini prints the list to stderr
     if gemini mcp list 2>&1 | grep -q "mempalace:"; then
         echo "✅ MemPalace MCP is already configured in Gemini CLI."
@@ -109,9 +107,8 @@ fi
 
 # 2.3 Antigravity Integration
 if [ -d "$HOME/.gemini/antigravity" ]; then
-    echo "------------------------------------------"
+    echo ""
     echo "🤖 Configuring Antigravity Integration..."
-    echo "------------------------------------------"
     ANTIGRAVITY_CONFIG="$HOME/.gemini/antigravity/mcp_config.json"
     
     # Create or initialize the config file if it doesn't exist or is empty
@@ -148,9 +145,8 @@ fi
 
 # 2.4 Cursor Integration
 if [ -d "$HOME/.cursor" ]; then
-    echo "------------------------------------------"
+    echo ""
     echo "🤖 Configuring Cursor Integration..."
-    echo "------------------------------------------"
     CURSOR_CONFIG="$HOME/.cursor/mcp.json"
     
     # Create the config file if it doesn't exist
@@ -183,10 +179,11 @@ else:
     print('✅ MemPalace MCP added to Cursor configuration.')
 "
 fi
+echo ""
 
 # 3. Graphify (Python via uv)
 echo "------------------------------------------"
-echo "📊 Installing Graphify (Code Graph)..."
+echo "📊 Graphify (Code Graph)..."
 echo "------------------------------------------"
 if uv tool list | grep -q "graphifyy"; then
     echo "✅ Graphify is already installed."
@@ -197,6 +194,20 @@ else
     # We use 'install --platform' to avoid creating local project rules/workflows
     graphify install --platform antigravity
     echo "✅ Graphify installed and initialized globally."
+fi
+echo ""
+
+# 4. OpenSpecs (Node.js)
+echo "------------------------------------------"
+echo "📋 OpenSpecs..."
+echo "------------------------------------------"
+
+if command -v openspec &> /dev/null; then
+    echo "✅ OpenSpecs is already installed."
+else
+    echo "📋 Installing OpenSpecs (Spec-Driven Development)..."
+    npm install -g @fission-ai/openspec@latest
+    echo "✅ OpenSpecs installed."
 fi
 echo ""
 
@@ -219,7 +230,7 @@ echo ""
 
 # Install obsidian-markdown skill
 echo "------------------------------------------"
-echo "📝 Installing Obsidian Markdown Skill..."
+echo "🔧 Installing Obsidian Markdown Skill..."
 echo "------------------------------------------"
 SKILLS_DIR="$HOME/.agents/skills"
 if [ -d "$SKILLS_DIR/obsidian-markdown" ]; then

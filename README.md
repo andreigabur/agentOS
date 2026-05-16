@@ -51,13 +51,24 @@ The installer **automatically configures the MCP server** for the following agen
 *To manually query your memory, run: `mempalace query "your question"`*
 
 ### 3. Codebase Intelligence (Graphify)
-*(Installation setup in progress)*
 Graphify is a codebase intelligence engine that maps your architecture (imports, function calls) into a knowledge graph.
+*   **Documentation:** [graphifyy on GitHub](https://github.com/safishamsi/graphify)
 
-### 4. Obsidian Vault
-A pre-configured `notes/` directory is created for your project knowledge. Graphify will export its architectural maps directly into this vault for visual navigation.
+### 4. Agent Skills
+AgentOS installs universal agent skills to enhance your tools with specialized capabilities:
+*   **Obsidian Markdown** — Create and edit Obsidian Flavored Markdown (wikilinks, callouts, frontmatter, embeds)
+*   **Obsidian CLI** — Interact with Obsidian vaults: read, create, search, and manage notes, tasks, and properties
+*   Skills are linked to Antigravity automatically; OpenCode discovers them from `~/.agents/skills/`
+
+### 5. Spec-Driven Development (OpenSpecs)
+OpenSpecs enables spec-driven development, letting you generate implementation plans from requirements before writing code.
+*   **To initialize in a project, run:**
+    ```bash
+    openspec init
+    ```
+    This creates an `openspec/` directory in your project and installs agent skills for spec-driven workflows.
+*   **Documentation:** [OpenSpec on GitHub](https://github.com/Fission-AI/OpenSpec)
 
 ## 🧩 Next Steps
 
-After running the installer, your agents are ready. Open Cursor, OpenCode, or Antigravity and ask your agent:
-> *"What tools do you have access to through the MemPalace MCP?"*
+After running the installer, your agents are ready.

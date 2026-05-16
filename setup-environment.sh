@@ -19,7 +19,7 @@ check_brew() {
 
 # --- 1. Node.js / NVM Check ---
 echo "------------------------------------------"
-echo "🔍 Checking for Node.js..."
+echo "🔍 Check Node.js..."
 echo "------------------------------------------"
 
 if command -v node &> /dev/null; then
@@ -53,7 +53,7 @@ echo ""
 
 # --- 2. uv Check ---
 echo "------------------------------------------"
-echo "🔍 Checking for uv..."
+echo "🔍 Check uv..."
 echo "------------------------------------------"
 
 if command -v uv &> /dev/null; then
@@ -78,7 +78,7 @@ echo ""
 
 # --- 3. Python Version Check ---
 echo "------------------------------------------"
-echo "🔍 Checking Python Version..."
+echo "🔍 Check Python version..."
 echo "------------------------------------------"
 
 # Function to compare versions
@@ -86,23 +86,39 @@ version_ge() {
     [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
 }
 
-# Try to get the version, handle cases where python3 might not exist yet
+REQUIRED_PYTHON_VERSION="3.10"
+
+# Check system python3 first
+CURRENT_PYTHON_VERSION="0.0"
 if command -v python3 &> /dev/null; then
-    # Extracts Major and Minor, e.g., "3.9"
     CURRENT_PYTHON_VERSION=$(python3 -c 'import sys; v=sys.version_info; print(f"{v[0]}.{v[1]}")')
-else
-    CURRENT_PYTHON_VERSION="0.0"
 fi
 
-REQUIRED_PYTHON_VERSION="3.10"
+# Also check if uv already has a sufficient Python
+UV_PYTHON_OK=false
+if command -v uv &> /dev/null; then
+    UV_PYTHON_VERSIONS=$(uv python list --only-installed 2>/dev/null | grep -oE 'cpython-([0-9]+\.[0-9]+)' | sed 's/cpython-//' | sort -V)
+    for v in $UV_PYTHON_VERSIONS; do
+        if version_ge "$v" "$REQUIRED_PYTHON_VERSION"; then
+            UV_PYTHON_OK=true
+            break
+        fi
+    done
+fi
 
 if version_ge "$CURRENT_PYTHON_VERSION" "$REQUIRED_PYTHON_VERSION"; then
     echo "✅ Python $CURRENT_PYTHON_VERSION is sufficient."
+elif $UV_PYTHON_OK; then
+    echo "✅ Python 3.12 is already available via uv."
 else
     echo "⚠️  Python $CURRENT_PYTHON_VERSION is too old (Need >= 3.10)."
     echo "🔄 Installing Python 3.12 via uv..."
-    uv python install 3.12
-    echo "✅ Python 3.12 installed via uv."
+    UV_OUTPUT=$(uv python install 3.12 2>&1)
+    if echo "$UV_OUTPUT" | grep -q "already installed"; then
+        echo "✅ Python 3.12 is already available via uv."
+    else
+        echo "✅ Python 3.12 installed via uv."
+    fi
 fi
 
 echo ""
