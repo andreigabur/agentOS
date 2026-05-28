@@ -70,6 +70,13 @@ OpenSpecs enables spec-driven development, letting you generate implementation p
     This creates an `openspec/` directory in your project and installs agent skills for spec-driven workflows.
 *   **Documentation:** [OpenSpec on GitHub](https://github.com/Fission-AI/OpenSpec)
 
+### 5. Local Memory MCP
+AgentOS supports local-first, project-specific memory using the official Model Context Protocol (MCP) memory server.
+*   **Workspace Integration**: The `./setup-project.sh` script automatically configures this memory for **OpenCode** (`opencode.json`) and **Antigravity** (`.agents/mcp_config.json`).
+*   **Git-Tracked Storage**: Memories are saved inside the project workspace at `.memory/project.jsonl`, keeping memory bound to the repository.
+*   **Interaction Rules**: Guidelines on how the agent should read/write experiential context (trade-offs, quirks, rationale) are appended to the project's `AGENTS.md` file.
+
 ## 🧩 Next Steps
+
 
 After running the installer, your agents are ready.
