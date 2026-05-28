@@ -21,6 +21,13 @@ if [ -z "$PROJECT_PATH" ]; then
     exit 1
 fi
 
+# Manually expand tilde (~) to $HOME if passed literally
+if [[ "$PROJECT_PATH" == "~/"* ]]; then
+    PROJECT_PATH="${PROJECT_PATH/\~/$HOME}"
+elif [ "$PROJECT_PATH" = "~" ]; then
+    PROJECT_PATH="$HOME"
+fi
+
 # Resolve the project path to an absolute path
 mkdir -p "$PROJECT_PATH"
 ABS_PROJECT_PATH=$(cd "$PROJECT_PATH" && pwd)
@@ -104,6 +111,78 @@ if [ $# -gt 0 ]; then
     echo "✅ Custom skills installed."
     echo ""
 fi
+
+# 5. Local Memory MCP Configuration
+echo "------------------------------------------"
+echo "🧠 Configuring Local Memory MCP..."
+echo "------------------------------------------"
+node -e '
+const fs = require("fs");
+const path = require("path");
+const projectPath = process.argv[1];
+const memoryFilePath = path.join(projectPath, ".memory", "project.jsonl");
+fs.mkdirSync(path.join(projectPath, ".memory"), { recursive: true });
+
+// 1. opencode.json
+const opencodePath = path.join(projectPath, "opencode.json");
+let opencodeData = {};
+if (fs.existsSync(opencodePath)) {
+  try { opencodeData = JSON.parse(fs.readFileSync(opencodePath, "utf8")); } catch (e) {}
+}
+if (!opencodeData["$schema"]) opencodeData["$schema"] = "https://opencode.ai/config.json";
+if (!opencodeData["mcp"]) opencodeData["mcp"] = {};
+opencodeData["mcp"]["memory"] = {
+  type: "local",
+  command: ["npx", "-y", "@modelcontextprotocol/server-memory"],
+  environment: { MEMORY_FILE_PATH: memoryFilePath }
+};
+fs.writeFileSync(opencodePath, JSON.stringify(opencodeData, null, 2));
+
+// 2. .agents/mcp_config.json
+const agentsDir = path.join(projectPath, ".agents");
+fs.mkdirSync(agentsDir, { recursive: true });
+const mcpConfigPath = path.join(agentsDir, "mcp_config.json");
+let mcpData = {};
+if (fs.existsSync(mcpConfigPath)) {
+  try { mcpData = JSON.parse(fs.readFileSync(mcpConfigPath, "utf8")); } catch (e) {}
+}
+if (!mcpData["mcpServers"]) mcpData["mcpServers"] = {};
+mcpData["mcpServers"]["memory"] = {
+  command: "npx",
+  args: ["-y", "@modelcontextprotocol/server-memory"],
+  env: { MEMORY_FILE_PATH: memoryFilePath }
+};
+fs.writeFileSync(mcpConfigPath, JSON.stringify(mcpData, null, 2));
+' "$ABS_PROJECT_PATH"
+echo "✅ Local Memory MCP configured."
+echo ""
+
+# 6. Update AGENTS.md with Memory MCP rules
+echo "------------------------------------------"
+echo "📝 Updating AGENTS.md with Memory rules..."
+echo "------------------------------------------"
+AGENTS_MD_PATH="AGENTS.md"
+if [ ! -f "$AGENTS_MD_PATH" ]; then
+    touch "$AGENTS_MD_PATH"
+fi
+
+if ! grep -q "## Memory MCP" "$AGENTS_MD_PATH"; then
+    cat << 'EOF' >> "$AGENTS_MD_PATH"
+
+## Memory MCP
+
+This project uses the Memory MCP server to persist context, decisions, and preferences across sessions. The memory graph stores what we've *learned* about the code — distinct from graphify, which maps what the code *is*.
+
+Rules:
+- **When to read memory:** Use `search_nodes` or `read_graph` before starting tasks that depend on architectural decisions, environment quirks, or user preferences, especially when a previous session may have already investigated the same area.
+- **When to write memory:** Use `create_entities`, `create_relations`, and `add_observations` after resolving a non-obvious bug, establishing a new convention, or making a trade-off decision the user would want remembered.
+- **Scope:** Do NOT store raw code snippets, file structure, or AST-level facts — those belong in graphify. Memory is for experiential context (gotchas, rationale, preferences, workflows).
+EOF
+    echo "✅ Memory rules appended to AGENTS.md."
+else
+    echo "✅ Memory rules already exist in AGENTS.md."
+fi
+echo ""
 
 echo "=========================================="
 echo "🎉 Project Setup Complete!"
