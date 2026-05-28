@@ -54,21 +54,6 @@ echo ""
 
 # AgentOS Phase 3: Agent Skills
 
-echo "------------------------------------------"
-echo "🧩 Configuring Agent Skills..."
-echo "------------------------------------------"
-if [ -d "$HOME/.gemini/antigravity" ]; then
-    echo "🔗 Linking Universal Skills to Antigravity..."
-    SKILLS_FILE="$HOME/.gemini/antigravity/skills.txt"
-    if grep -q "^$HOME/.agents/skills\$" "$SKILLS_FILE" 2>/dev/null; then
-        echo "✅ Antigravity already configured to use universal skills."
-    else
-        echo "$HOME/.agents/skills" >> "$SKILLS_FILE"
-        echo "✅ Antigravity configured to use universal skills."
-    fi
-fi
-echo ""
-
 # Install obsidian-markdown skill
 echo "------------------------------------------"
 echo "🔧 Installing Obsidian Markdown Skill..."

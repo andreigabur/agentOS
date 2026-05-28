@@ -23,9 +23,20 @@ chmod +x setup-environment.sh && ./setup-environment.sh
 ```
 
 ### **If you already have the prerequisites**
-If you already have Node.js, uv, and Python 3.10+ and only want to install the tools (CodeBurn, MemPalace, and Graphify):
+If you already have Node.js, uv, and Python 3.10+ and only want to install the tools (CodeBurn and Graphify):
 ```bash
 chmod +x setup-tools.sh && ./setup-tools.sh
+```
+
+### **If you want to set up a new project workspace**
+Use this script to initialize a project workspace, configure local Graphify settings, run OpenSpecs, normalize agent folders to `.agents`, and optionally install project-specific skills locally:
+```bash
+./setup-project.sh <project-path> [skill-url-1] [skill-url-2] ...
+```
+Example:
+```bash
+# Set up a new project with local graph/specs support and install a search skill locally
+./setup-project.sh ~/projects/my-new-app vercel-labs/skills/examples/web-search
 ```
 
 ---
@@ -40,27 +51,17 @@ CodeBurn provides a local, terminal-based dashboard to track exactly how many to
     ```
 *This will open the TUI (Terminal User Interface) where you can see live token metrics and task classifications across all your tools.*
 
-### 2. Unified Agent Memory (MemPalace)
-AgentOS sets up a "Hidden Palace" (`~/.mempalace/vault`) to act as a single, unified brain for all your AI coding tools. 
-The installer **automatically configures the MCP server** for the following agents, meaning they all share the exact same context and memories:
-*   🤖 **OpenCode**
-*   🚀 **Gemini CLI**
-*   🌌 **Google Antigravity**
-*   🖥️ **Cursor**
-
-*To manually query your memory, run: `mempalace query "your question"`*
-
-### 3. Codebase Intelligence (Graphify)
+### 2. Codebase Intelligence (Graphify)
 Graphify is a codebase intelligence engine that maps your architecture (imports, function calls) into a knowledge graph.
 *   **Documentation:** [graphifyy on GitHub](https://github.com/safishamsi/graphify)
 
-### 4. Agent Skills
+### 3. Agent Skills
 AgentOS installs universal agent skills to enhance your tools with specialized capabilities:
 *   **Obsidian Markdown** — Create and edit Obsidian Flavored Markdown (wikilinks, callouts, frontmatter, embeds)
 *   **Obsidian CLI** — Interact with Obsidian vaults: read, create, search, and manage notes, tasks, and properties
 *   Skills are linked to Antigravity automatically; OpenCode discovers them from `~/.agents/skills/`
 
-### 5. Spec-Driven Development (OpenSpecs)
+### 4. Spec-Driven Development (OpenSpecs)
 OpenSpecs enables spec-driven development, letting you generate implementation plans from requirements before writing code.
 *   **To initialize in a project, run:**
     ```bash
